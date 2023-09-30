@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>6.0</version>
+    <date>2023-09-30T04:47:39Z</date>
+    <groups>
+        <group>
+            <uuid>63afd5faec3748d29f4288c173909a9e</uuid>
+            <name>PING</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <uuid>3e1568759d68400c888bcf002f3c8514</uuid>
+            <template>Custom Ping</template>
+            <name>Custom Ping</name>
+            <description>Link this Template on host for pinging to HOST with 1000b packet size.
+
+Attention!!!!! 
+Don't forget to add hostnames or IPs in Macros.</description>
+            <groups>
+                <group>
+                    <name>PING</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>0509c36d7ecc458f818d19b8f73f5afd</uuid>
+                    <name>Packet Loss</name>
+                    <key>ping.loss[{$HOST1}]</key>
+                    <delay>20s</delay>
+                    <units>%</units>
+                    <triggers>
+                        <trigger>
+                            <uuid>93d3e7dff1f14525a07cfca20180a49e</uuid>
+                            <expression>min(/Custom Ping/ping.loss[{$HOST1}],5m)&gt;20 and min(/Custom Ping/ping.loss[{$HOST1}],5m)&lt;100</expression>
+                            <name>High ICMP ping loss to {$HOST1}</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>c4c99097962c463e9d45ed4325772155</uuid>
+                    <name>Response Time</name>
+                    <key>ping.response[{$HOST1}]</key>
+                    <delay>20s</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>ms</units>
+                    <triggers>
+                        <trigger>
+                            <uuid>0ffd51fa27e444a282d4b51f4fb34e94</uuid>
+                            <expression>avg(/Custom Ping/ping.response[{$HOST1}],5m)&gt;3</expression>
+                            <name>High ICMP ping response time to {$HOST1}</name>
+                            <priority>WARNING</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>High ICMP ping loss to {$HOST1}</name>
+                                    <expression>min(/Custom Ping/ping.loss[{$HOST1}],5m)&gt;20 and min(/Custom Ping/ping.loss[{$HOST1}],5m)&lt;100</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$HOST1}</macro>
+                </macro>
+                <macro>
+                    <macro>{$HOST2}</macro>
+                </macro>
+                <macro>
+                    <macro>{$HOST3}</macro>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
